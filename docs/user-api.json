@@ -1,0 +1,364 @@
+{
+    "openapi": "3.1.1",
+    "info": {
+        "title": "User API",
+        "description": "API for managing user accounts and profiles.",
+        "version": "1.0"
+    },
+    "servers": [{ "url": "http://localhost:8000" }],
+    "paths": {
+        "/api/users/register": {
+            "post": {
+                "description": "Register a new user account.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "Bagas": {
+                                    "description": "Register a new user named Bagas",
+                                    "value": {
+                                        "username": "bagas",
+                                        "email": "bagas@example.com",
+                                        "password": "bagaspassword123"
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "type": "object",
+                                "required": ["username", "email", "password"],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "The username of the new user."
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "description": "The email address of the new user."
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "The password for the new user."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully.",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Success": {
+                                        "description": "Response for successful registration of user Bagas",
+                                        "value": {
+                                            "data": {
+                                                "id": 1,
+                                                "username": "bagas",
+                                                "email": "bagas.example.com"
+                                            }
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "description": "The unique identifier of the user."
+                                                },
+                                                "username": {
+                                                    "type": "string",
+                                                    "description": "The username of the registered user."
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "description": "The email address of the registered user."
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error or user already exists.",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "ValidationError": {
+                                        "description": "Response for validation error during user registration",
+                                        "value": {
+                                            "errors": {
+                                                "username": [
+                                                    "Username is required.",
+                                                    "Username must be at least 3 characters long."
+                                                ],
+                                                "email": [
+                                                    "Email is required.",
+                                                    "Email must be a valid email address."
+                                                ],
+                                                "password": [
+                                                    "Password is required.",
+                                                    "Password must be at least 8 characters long."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "UserExists": {
+                                        "description": "Response when the user already exists",
+                                        "value": {
+                                            "errors": {
+                                                "username": "Username already exists.",
+                                                "email": "Email already exists."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/login": {
+            "post": {
+                "description": "Log in an existing user.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "Login Bagas": {
+                                    "description": "Login with email and password",
+                                    "value": {
+                                        "email": "bagas@example.com",
+                                        "password": "bagaspassword123"
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "type": "object",
+                                "required": ["email", "password"],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "description": "The email address of the user."
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "The password of the user."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User logged in successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "description": "The unique id of the user."
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "description": "The email address of the user."
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "description": "The aunthentication token for the user."
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "get": {
+                "description": "Retrieve a list of all users.",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get all list of users.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "description": "The unique identifier of the user."
+                                                },
+                                                "username": {
+                                                    "type": "string",
+                                                    "description": "The username of the user."
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "description": "The email address of the user."
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "description": "Any errors that occurred during the request."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update the current user.",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": ["username", "email", "password"],
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "The new username of the user."
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "description": "The new email address of the user."
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "The new password for the user."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated succesfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "description": "The unique identifier of the user."
+                                                },
+                                                "username": {
+                                                    "type": "string",
+                                                    "description": "The updated username of the user."
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "description": "The updated email address of the user."
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "description": "Any errors that occurred during the update."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/logout": {
+            "delete": {
+                "description": "Log out the current user.",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User Logged out succesfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "boolean",
+                                            "description": "Indicates whether the logout was successful."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "description": "Any errors that occurred during the logout."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
